@@ -10,10 +10,10 @@
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="modulepreload" href="https://esm.sh/three@0.175.0">
-<link rel="stylesheet" href="assets/site.css?v=7">
-<link rel="stylesheet" href="assets/home.css?v=7">
+<link rel="stylesheet" href="assets/site.css?v=16">
+<link rel="stylesheet" href="assets/home.css?v=16">
 <script type="importmap">
 {
   "imports": {
@@ -61,17 +61,18 @@
 <div class="story" id="top">
   <div class="canvas-stick" aria-hidden="true">
     <div class="ring3d"></div>
-    <svg class="poster" viewBox="0 0 100 100" data-facet-mark></svg>
+    <p class="word-fallback">Ratna</p>
   </div>
 
-  <section class="hero" data-theme="light" aria-labelledby="hero-title">
+  <!-- The hero is one image: the word RATNA (Sanskrit for jewel) wearing the ring on its T.
+       The letters and ring are WebGL; this layer only carries the words that need to be text. -->
+  <section class="hero" data-theme="light" data-loupe aria-labelledby="hero-title">
     <div class="stick">
-      <div class="hero-copy wrap">
-        <h1 class="disp hero-title" id="hero-title" data-reveal><span class="ln"><span>Brilliant.</span></span><span class="ln"><span>By appointment.</span></span></h1>
-        <div class="hero-side fade" data-reveal>
-          <p>Custom engagement rings, wedding bands and fine jewellery in lab-grown diamond. Designed with you in Toronto, shipped insured anywhere.</p>
-          <p class="cta"><a class="btn" href="book.html">Book a consultation</a> <a class="link" href="book.html#quote">Request a quote ›</a></p>
-        </div>
+      <h1 class="sr-only" id="hero-title">Ratna by Batra: custom lab-grown diamond jewellery, Toronto</h1>
+      <p class="statement disp" aria-hidden="true"><span class="ln"><span>Brilliant.</span></span><span class="ln"><span>By appointment.</span></span></p>
+      <div class="hero-foot wrap">
+        <p class="hero-line"><b>Ratna</b> is Sanskrit for jewel. Custom engagement rings, wedding bands and fine jewellery in lab-grown diamond, designed with you in Toronto.</p>
+        <p class="hero-cta"><a class="btn" href="book.html">Book a consultation</a> <a class="link" href="book.html#quote">Request a quote ›</a></p>
       </div>
     </div>
   </section>
@@ -131,16 +132,18 @@
     <button aria-pressed="false" data-filter="bands">Wedding bands</button>
     <button aria-pressed="false" data-filter="fine">Fine jewellery</button>
   </div>
-  <div class="rail" tabindex="0" aria-label="Gallery of past work, scroll sideways">
-    <figure data-kind="engagement"><div class="ph"><span data-facet="oval"></span><small>Photo to come</small></div><figcaption><b>Engagement ring.</b> Oval.</figcaption></figure>
-    <figure data-kind="engagement"><div class="ph"><span data-facet="emerald"></span><small>Photo to come</small></div><figcaption><b>Engagement ring.</b> Emerald.</figcaption></figure>
-    <figure data-kind="bands"><div class="ph"><span data-facet="round"></span><small>Photo to come</small></div><figcaption><b>Wedding bands.</b> A matched pair.</figcaption></figure>
-    <figure data-kind="engagement"><div class="ph"><span data-facet="pear"></span><small>Photo to come</small></div><figcaption><b>Engagement ring.</b> Pear.</figcaption></figure>
-    <figure data-kind="fine"><div class="ph"><span data-facet="round"></span><small>Photo to come</small></div><figcaption><b>Fine jewellery.</b> Tennis bracelet.</figcaption></figure>
-    <figure data-kind="fine"><div class="ph"><span data-facet="marquise"></span><small>Photo to come</small></div><figcaption><b>Fine jewellery.</b> Pendant.</figcaption></figure>
-    <figure data-kind="fine"><div class="ph"><span data-facet="cushion"></span><small>Photo to come</small></div><figcaption><b>Fine jewellery.</b> Studs.</figcaption></figure>
-    <figure data-kind="engagement"><div class="ph"><span data-facet="radiant"></span><small>Photo to come</small></div><figcaption><b>Engagement ring.</b> Radiant.</figcaption></figure>
+  <div class="rail" tabindex="0" data-loupe aria-label="Gallery of past work, scroll sideways">
+    <figure data-kind="engagement" data-cut="emerald"><div class="ph"><span data-facet="oval"></span><small>Photo to come</small></div><figcaption><b>Engagement ring.</b> Oval.</figcaption></figure>
+    <figure data-kind="engagement" data-cut="asscher"><div class="ph"><span data-facet="emerald"></span><small>Photo to come</small></div><figcaption><b>Engagement ring.</b> Emerald.</figcaption></figure>
+    <figure data-kind="bands" data-cut="baguette"><div class="ph"><span data-facet="round"></span><small>Photo to come</small></div><figcaption><b>Wedding bands.</b> A matched pair.</figcaption></figure>
+    <figure data-kind="engagement" data-cut="shield"><div class="ph"><span data-facet="pear"></span><small>Photo to come</small></div><figcaption><b>Engagement ring.</b> Pear.</figcaption></figure>
+    <figure data-kind="fine" data-cut="hexagon"><div class="ph"><span data-facet="round"></span><small>Photo to come</small></div><figcaption><b>Fine jewellery.</b> Tennis bracelet.</figcaption></figure>
+    <figure data-kind="fine" data-cut="trapezoid"><div class="ph"><span data-facet="marquise"></span><small>Photo to come</small></div><figcaption><b>Fine jewellery.</b> Pendant.</figcaption></figure>
+    <figure data-kind="fine" data-cut="asscher"><div class="ph"><span data-facet="cushion"></span><small>Photo to come</small></div><figcaption><b>Fine jewellery.</b> Studs.</figcaption></figure>
+    <figure data-kind="engagement" data-cut="emerald"><div class="ph"><span data-facet="radiant"></span><small>Photo to come</small></div><figcaption><b>Engagement ring.</b> Radiant.</figcaption></figure>
   </div>
+  <!-- A jeweller's millimetre gauge doubles as the rail's scroll position -->
+  <div class="wrap gauge" aria-hidden="true"><i class="gauge-mark"></i></div>
   <div class="wrap rail-foot">
     <a class="link" href="book.html#quote">Start a piece of your own ›</a>
     <div class="rail-nav">
@@ -150,25 +153,34 @@
   </div>
 </section>
 
-<!-- Scene 4: lab-grown, explained. Pinned. The facet drawing turns while three facts arrive. -->
-<section class="lab" id="lab" data-scene="lab" data-theme="dark" aria-labelledby="lab-title">
+<!-- Scene 4: lab-grown. The whole section is cut to a real diamond's profile (crown at 34.5°,
+     pavilion at 40.75°). Inside it glows the plasma lab diamonds are grown in, and light rays are
+     traced through the profile with Snell's law: in, two bounces, out, splitting into colour. -->
+<section class="lab" id="lab" data-theme="light" aria-labelledby="lab-title">
   <div class="stick">
-    <svg class="lab-facet" viewBox="0 0 100 100" data-facet-mark aria-hidden="true"></svg>
-    <div class="wrap lab-grid">
-      <h2 class="h2" id="lab-title">Same diamond.<br>Kinder price.</h2>
-      <ol class="facts">
-        <li><p class="h3">A real diamond.</p><p>Lab-grown diamonds are pure carbon crystals, chemically, physically and optically the same as mined ones.</p></li>
-        <li><p class="h3">Graded the same way.</p><p>Cut, colour, clarity and carat, on the same scale, by independent labs such as IGI and GIA.</p></li>
-        <li><p class="h3">More stone for your budget.</p><p>A lab-grown diamond usually costs far less than a mined one of the same size and grade.</p></li>
-      </ol>
+    <div class="gem">
+      <canvas class="plasma" aria-hidden="true"></canvas>
+      <svg class="rays rays-in" aria-hidden="true"></svg>
+      <div class="gem-in wrap">
+        <div class="gem-head">
+          <p class="eyebrow">Lab-grown</p>
+          <h2 class="h2" id="lab-title">Same diamond.<br>Kinder price.</h2>
+        </div>
+        <ol class="facts">
+          <li class="glass on-dark" data-blur="9" data-refract="30"><p class="h3">Grown, not mined.</p><p>Pure carbon, grown in weeks under conditions that recreate how diamonds form in the earth.</p></li>
+          <li class="glass on-dark" data-blur="9" data-refract="30"><p class="h3">Graded the same way.</p><p>Chemically and optically identical to mined diamonds, and graded on the same scale by labs such as IGI and GIA.</p></li>
+          <li class="glass on-dark" data-blur="9" data-refract="30"><p class="h3">More stone for your budget.</p><p>A lab-grown diamond usually costs far less than a mined one of the same size and grade.</p></li>
+        </ol>
+      </div>
     </div>
+    <svg class="rays rays-out" aria-hidden="true"></svg>
   </div>
 </section>
 
 <!-- Scene 5: the consultation itself -->
 <section class="visit" id="visit" data-theme="light" aria-labelledby="visit-title">
   <div class="wrap visit-grid">
-    <figure class="visit-photo"><div class="ph tall"><span data-facet="round"></span><small>Studio photo to come</small></div></figure>
+    <figure class="visit-photo" data-cut="emerald"><div class="ph tall"><span data-facet="round"></span><small>Studio photo to come</small></div></figure>
     <div class="visit-copy">
       <p class="eyebrow">Private consultations</p>
       <h2 class="h2" id="visit-title" data-reveal><span class="ln"><span>An appointment,</span></span><span class="ln"><span>not a showroom.</span></span></h2>
@@ -194,8 +206,10 @@
         <p class="cta"><a class="btn" href="book.html">Book a consultation</a> <a class="link" href="book.html#quote">Request a quote ›</a></p>
       </div>
     </div>
-    <img class="logo" src="assets/logo.webp" alt="Ratna by Batra, fine diamond jewellery" width="820" height="850" loading="lazy">
-    <p class="meaning"><span>Ratna</span> is Sanskrit for jewel.</p>
+    <div class="logo-wrap">
+      <img class="logo" src="assets/logo.webp" alt="Ratna by Batra, fine diamond jewellery" width="820" height="850" loading="lazy">
+      <svg class="twinkle" viewBox="-20 -20 40 40" aria-hidden="true"><path d="M0-20Q0-3 3 0Q0 0 0 20Q0 3-3 0Q0 0 0-20ZM-20 0Q-3 0 0-3Q0 0 20 0Q3 0 0 3Q0 0-20 0Z"/></svg>
+    </div>
     <div class="foot">
       <span>Ratna by Batra · Fine diamond jewellery · Toronto</span>
       <span><a href="https://www.instagram.com/ratnabybatra/">Instagram</a> · <a href="tel:+16475126001">647-512-6001</a> · <a href="mailto:sales@ratnabybatra.com">sales@ratnabybatra.com</a></span>
@@ -204,8 +218,9 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
-<script src="assets/site.js?v=7"></script>
-<script src="assets/home.js?v=7"></script>
-<script type="module" src="assets/ring3d.js?v=7"></script>
+<script src="assets/site.js?v=16"></script>
+<script src="assets/home.js?v=16"></script>
+<script src="assets/lab.js?v=16"></script>
+<script type="module" src="assets/ring3d.js?v=16"></script>
 </body>
 </html>

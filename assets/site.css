@@ -123,6 +123,14 @@ button, input, select, textarea { font: inherit; color: inherit; letter-spacing:
   .glass.on-dark { background: rgba(26, 24, 22, .96); }
 }
 
+/* ---------- The loupe: an octagonal lens of liquid glass (built in site.js) ---------- */
+.loupe { position: fixed; left: 0; top: 0; z-index: 60; width: var(--s); height: var(--s); pointer-events: none; visibility: hidden; will-change: transform; }
+.loupe > * { position: absolute; inset: 0; width: 100%; height: 100%; }
+.loupe-lens { clip-path: polygon(29.3% 0, 70.7% 0, 100% 29.3%, 100% 70.7%, 70.7% 100%, 29.3% 100%, 0 70.7%, 0 29.3%); background: rgba(255, 252, 246, .05); }
+.loupe svg { overflow: visible; transform-origin: 50% 50%; filter: drop-shadow(0 6px 14px rgba(42, 33, 25, .18)); }
+.loupe-rim { fill: none; stroke: #CFA25A; stroke-width: 1.3; vector-effect: non-scaling-stroke; }
+.loupe-shine { fill: none; stroke: rgba(255, 255, 255, .8); stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-dasharray: 60 340; stroke-dashoffset: -268; transform: scale(.975); transform-origin: 50% 50%; }
+
 /* ---------- Nav: a full-width glass bar, as on apple.com, aligned to the content grid ---------- */
 .nav {
   position: fixed; z-index: 50; top: 0; left: 0; right: 0; height: 52px; border-radius: 0;
@@ -167,7 +175,15 @@ button, input, select, textarea { font: inherit; color: inherit; letter-spacing:
 .finale .ask p { margin: 0; }
 .finale .ask .lede { color: var(--ink-2); }
 .finale .ask .cta { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; margin-top: 28px; }
-.finale .logo { display: block; width: min(440px, 72vw); height: auto; margin: clamp(72px, 10vw, 140px) auto 0; }
+.logo-wrap { position: relative; width: min(440px, 72vw); margin: clamp(72px, 10vw, 140px) auto 0; }
+.finale .logo { display: block; width: 100%; height: auto; }
+/* Now and then the star in the logo catches the light */
+.twinkle { position: absolute; left: 51.8%; top: 9.6%; width: 11%; fill: #FFF8E6; transform: translate(-50%, -50%) scale(0); opacity: 0; filter: drop-shadow(0 0 6px rgba(255, 214, 140, .95)); animation: twinkle 6s cubic-bezier(.16, 1, .3, 1) 2s infinite; pointer-events: none; }
+@keyframes twinkle {
+  0%, 74%, 100% { transform: translate(-50%, -50%) scale(0) rotate(0deg); opacity: 0; }
+  82% { transform: translate(-50%, -50%) scale(1) rotate(45deg); opacity: 1; }
+  92% { transform: translate(-50%, -50%) scale(.5) rotate(70deg); opacity: .4; }
+}
 /* The logo file has its own cream background, never darker than the page: darken lets the page
    show through it, so there's no box */
 .finale .logo, .pv-logo { mix-blend-mode: darken; }

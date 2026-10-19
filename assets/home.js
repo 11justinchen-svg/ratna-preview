@@ -40,9 +40,83 @@
       });
       rail.scrollTo({ left: 0 });
       railButtons();
+
+  /* ---------- Step-cut frames ----------
+     Each gallery tile (and the studio photo) is cut to a real step-cut outline, drawn as a clip on
+     the frame plus a gold hairline that follows it. Ratios are width / height. */
+  const CUTS = {
+    emerald: { ar: 0.8, pts: (ar) => { const c = 14, v = c * ar; return [[c, 0], [100 - c, 0], [100, v], [100, 100 - v], [100 - c, 100], [c, 100], [0, 100 - v], [0, v]]; } },
+    asscher: { ar: 0.94, pts: () => [[26, 0], [74, 0], [100, 26], [100, 74], [74, 100], [26, 100], [0, 74], [0, 26]] },
+    baguette: { ar: 0.6, pts: () => [[11, 0], [89, 0], [100, 100], [0, 100]] },
+    shield: { ar: 0.8, pts: () => [[0, 0], [100, 0], [100, 72], [50, 100], [0, 72]] },
+    hexagon: { ar: 1.3, pts: () => [[19, 0], [81, 0], [100, 50], [81, 100], [19, 100], [0, 50]] },
+    trapezoid: { ar: 0.76, pts: () => [[0, 0], [100, 0], [87, 100], [13, 100]] },
+  };
+  document.querySelectorAll("[data-cut]").forEach((fig) => {
+    const cut = CUTS[fig.dataset.cut];
+    const ph = fig.querySelector(".ph");
+    if (!cut || !ph) return;
+    const ar = fig.classList.contains("visit-photo") ? 0.8 : cut.ar;
+    const pts = cut.pts(ar);
+    fig.style.setProperty("--ar", ar);
+    ph.style.clipPath = `polygon(${pts.map(([x, y]) => `${x}% ${y}%`).join(",")})`;
+    const line = document.createElementNS(R.NS, "svg");
+    line.setAttribute("class", "cut-line");
+    line.setAttribute("viewBox", "0 0 100 100");
+    line.setAttribute("preserveAspectRatio", "none");
+    line.setAttribute("aria-hidden", "true");
+    line.innerHTML = `<polygon points="${pts.map((p) => p.join(",")).join(" ")}"/>`;
+    ph.after(line);
+  });
+
+  // The gauge: a gold mark rides the millimetre ticks as the rail scrolls
+  const gaugeMark = document.querySelector(".gauge-mark");
+  const gauge = () => {
+    const max = rail.scrollWidth - rail.clientWidth;
+    gaugeMark.style.setProperty("--g", max > 0 ? rail.scrollLeft / max : 0);
+  };
+  rail.addEventListener("scroll", gauge, { passive: true });
+  gauge();
     }),
   );
   railButtons();
+
+  /* ---------- Step-cut frames ----------
+     Each gallery tile (and the studio photo) is cut to a real step-cut outline, drawn as a clip on
+     the frame plus a gold hairline that follows it. Ratios are width / height. */
+  const CUTS = {
+    emerald: { ar: 0.8, pts: (ar) => { const c = 14, v = c * ar; return [[c, 0], [100 - c, 0], [100, v], [100, 100 - v], [100 - c, 100], [c, 100], [0, 100 - v], [0, v]]; } },
+    asscher: { ar: 0.94, pts: () => [[26, 0], [74, 0], [100, 26], [100, 74], [74, 100], [26, 100], [0, 74], [0, 26]] },
+    baguette: { ar: 0.6, pts: () => [[11, 0], [89, 0], [100, 100], [0, 100]] },
+    shield: { ar: 0.8, pts: () => [[0, 0], [100, 0], [100, 72], [50, 100], [0, 72]] },
+    hexagon: { ar: 1.3, pts: () => [[19, 0], [81, 0], [100, 50], [81, 100], [19, 100], [0, 50]] },
+    trapezoid: { ar: 0.76, pts: () => [[0, 0], [100, 0], [87, 100], [13, 100]] },
+  };
+  document.querySelectorAll("[data-cut]").forEach((fig) => {
+    const cut = CUTS[fig.dataset.cut];
+    const ph = fig.querySelector(".ph");
+    if (!cut || !ph) return;
+    const ar = fig.classList.contains("visit-photo") ? 0.8 : cut.ar;
+    const pts = cut.pts(ar);
+    fig.style.setProperty("--ar", ar);
+    ph.style.clipPath = `polygon(${pts.map(([x, y]) => `${x}% ${y}%`).join(",")})`;
+    const line = document.createElementNS(R.NS, "svg");
+    line.setAttribute("class", "cut-line");
+    line.setAttribute("viewBox", "0 0 100 100");
+    line.setAttribute("preserveAspectRatio", "none");
+    line.setAttribute("aria-hidden", "true");
+    line.innerHTML = `<polygon points="${pts.map((p) => p.join(",")).join(" ")}"/>`;
+    ph.after(line);
+  });
+
+  // The gauge: a gold mark rides the millimetre ticks as the rail scrolls
+  const gaugeMark = document.querySelector(".gauge-mark");
+  const gauge = () => {
+    const max = rail.scrollWidth - rail.clientWidth;
+    gaugeMark.style.setProperty("--g", max > 0 ? rail.scrollLeft / max : 0);
+  };
+  rail.addEventListener("scroll", gauge, { passive: true });
+  gauge();
 
   // Shared with ring3d.js
   R.story = { hero: 0, proc: 0, ready: false };
@@ -50,14 +124,22 @@
 
   /* ---------- 1 Hero ---------- */
   const hero = document.querySelector(".hero");
-  const copy = hero.querySelector(".hero-copy");
+  const foot = hero.querySelector(".hero-foot");
+  const lines = [...hero.querySelectorAll(".statement .ln > span")];
   function heroFrame() {
     const p = progress(hero);
     R.story.hero = p;
-    const out = range(p, 0.02, 0.3);
-    copy.style.transform = `translateY(${-70 * ease(out)}px)`;
-    copy.style.opacity = 1 - out;
-    copy.style.visibility = out >= 1 ? "hidden" : "";
+    // The quiet line and the buttons step aside as soon as you scroll
+    const out = range(p, 0.02, 0.18);
+    foot.style.transform = `translateY(${40 * ease(out)}px)`;
+    foot.style.opacity = 1 - out;
+    foot.style.visibility = out >= 1 ? "hidden" : "";
+    // "Brilliant. By appointment." rises into the gap the letters leave, then lifts away
+    lines.forEach((el, i) => {
+      const inn = ease(range(p, 0.2 + i * 0.04, 0.34 + i * 0.04));
+      const away = ease(range(p, 0.46, 0.56));
+      el.style.transform = `translateY(${(1 - inn) * 105 - away * 105}%)`;
+    });
     hero.dataset.theme = p > 0.62 ? "dark" : "light";
   }
 
@@ -128,22 +210,9 @@
     steps[2].querySelector("i").style.setProperty("--p", range(p, 0.7, 0.93));
   }
 
-  /* ---------- 4 Lab-grown ---------- */
-  const lab = document.querySelector(".lab");
-  const labFacet = lab.querySelector(".lab-facet");
-  const facts = [...lab.querySelectorAll(".facts li")];
-  function labFrame() {
-    const p = progress(lab);
-    labFacet.style.setProperty("--rot", `${p * 45}deg`);
-    facts.forEach((f, i) =>
-      f.style.setProperty("--f", ease(range(p, 0.12 + i * 0.2, 0.3 + i * 0.2))),
-    );
-  }
-
   const all = () => {
     heroFrame();
     procFrame();
-    labFrame();
   };
   frameFns.push(all);
   all();

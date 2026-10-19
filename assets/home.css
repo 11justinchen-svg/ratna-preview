@@ -1,5 +1,5 @@
 /* Home: scene storyboard
-   1 Hero       240vh pinned  the 3D ring turns on ivory; the room goes dark until only the stone is lit
+   1 Hero       240vh pinned  the word RATNA wears the ring on its T; the letters part, the ring lifts off, the room goes dark
    2 Process    640vh pinned  the stone turns and changes shape (oval → radiant → pear → round); the setting
                               draws itself as a CAD wireframe; metal is cast up through it as night turns to day
    3 Work       auto          gallery rail (placeholders until real photos), native swipe, filters
@@ -16,31 +16,24 @@
 .ring3d.ready { opacity: 1; }
 .ring3d canvas { display: block; touch-action: pan-y; }
 /* Until WebGL is up (or if it never is), the stone's drawing holds the frame */
-.poster { position: absolute; left: 50%; top: 42%; width: min(26vh, 40vw); height: auto; transform: translate(-50%, -50%); color: var(--ink); opacity: .5; transition: opacity .8s; }
-.ready ~ .poster { opacity: 0; }
+/* If WebGL never arrives, the word is still there, set in the logo's capitals */
+.word-fallback { position: absolute; left: 50%; top: 44%; margin: 0; transform: translate(-50%, -50%); font: 400 clamp(64px, 17vw, 300px)/1 Cinzel, "Times New Roman", serif; letter-spacing: .14em; text-transform: uppercase; color: #2A2119; white-space: nowrap; transition: opacity .8s; }
+.ready ~ .word-fallback { opacity: 0; }
 
 /* ---------- 1 Hero ---------- */
 .hero { height: 240vh; margin-top: -100vh; margin-top: -100svh; position: relative; }
-.hero-copy {
-  position: absolute; inset: auto 0 0; padding-bottom: clamp(28px, 6vh, 64px);
-  display: grid; grid-template-columns: 1fr minmax(260px, 340px); gap: 32px; align-items: end;
-  will-change: transform, opacity;
+/* Revealed on scroll, in the gap the letters leave as they part */
+.statement { position: absolute; left: 0; right: 0; bottom: 18vh; margin: 0; text-align: center; font-size: clamp(44px, 6.4vw, 104px); pointer-events: none; }
+.statement .ln > span { transform: translateY(105%); transition: none; }
+.hero-foot { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px 48px; padding-bottom: clamp(22px, 4.5vh, 44px); will-change: transform, opacity; }
+.hero-line { margin: 0; max-width: 420px; font-size: 15px; line-height: 1.45; color: var(--ink-2); }
+.hero-line b { color: var(--ink); font-weight: 600; }
+.hero-cta { margin: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+@media (max-width: 760px) {
+  .hero-foot { flex-direction: column; align-items: flex-start; }
+  .hero-line { font-size: 14px; }
+  .statement { bottom: auto; top: 22vh; }
 }
-.hero-title { font-size: clamp(56px, 8vw, 150px); }
-.hero-title .ln > span { white-space: nowrap; }
-.hero-side p { margin: 0; font-size: 17px; color: var(--ink-2); }
-.hero-side .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 20px; }
-@media (max-width: 1099px) {
-  .hero-copy { grid-template-columns: 1fr; gap: 22px; }
-  .hero-title { font-size: 10.5vw; }
-  .hero-side { max-width: 520px; }
-}
-@media (max-aspect-ratio: 4/5) {
-  .hero-copy { inset: 0; grid-template-columns: 1fr; grid-template-rows: 1fr auto; padding-top: 92px; align-items: start; }
-  .hero-title { font-size: clamp(40px, 12.6vw, 96px); }
-  .hero-side { align-self: end; }
-}
-@media (max-aspect-ratio: 4/5) and (max-height: 700px) { .hero-side p:first-child { display: none; } }
 
 /* ---------- 2 Process ---------- */
 /* Pulled up under the hero's last screen so its text pins the instant the hero ends */
@@ -111,38 +104,70 @@
   scrollbar-width: none;
 }
 .rail::-webkit-scrollbar { display: none; }
-.rail figure { flex: 0 0 clamp(250px, 29vw, 380px); margin: 0; scroll-snap-align: start; }
+/* A tray of cuts: every tile is the same height, its width set by its step-cut outline */
+.rail { --tile-h: clamp(300px, 31vw, 450px); align-items: flex-start; }
+.rail figure { flex: 0 0 auto; width: calc(var(--tile-h) * var(--ar, .8)); margin: 0; scroll-snap-align: start; position: relative; }
+.rail figure .ph { height: var(--tile-h); aspect-ratio: auto; }
+.cut-line { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.rail .cut-line { height: var(--tile-h); }
+.cut-line polygon { fill: none; stroke: #CFA25A; stroke-width: 1; vector-effect: non-scaling-stroke; }
 .rail figure[hidden] { display: none; }
 .rail figcaption { margin-top: 14px; font-size: 14px; color: var(--ink-2); letter-spacing: -.016em; }
 .rail figcaption b { color: var(--ink); font-weight: 600; }
-.rail-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; }
+/* Millimetre gauge: fine ticks every 8px, a heavier one every 80px; the gold mark is the scroll */
+.gauge { position: relative; height: 18px; margin-top: 30px;
+  background:
+    repeating-linear-gradient(90deg, rgba(29, 29, 31, .3) 0 1px, transparent 1px 8px) left bottom / 100% 6px no-repeat,
+    repeating-linear-gradient(90deg, rgba(29, 29, 31, .55) 0 1px, transparent 1px 80px) left bottom / 100% 12px no-repeat;
+  box-shadow: inset 0 -1px 0 rgba(29, 29, 31, .2); }
+.gauge-mark { position: absolute; bottom: 0; left: calc(var(--g, 0) * (100% - 2px)); width: 2px; height: 18px; background: var(--gold); }
+.rail-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 22px; }
 .rail-nav { display: flex; gap: 12px; }
 .rail-nav button { width: 44px; height: 44px; border: 0; cursor: pointer; color: var(--ink); display: grid; place-items: center; }
 .rail-nav button:disabled { opacity: .35; cursor: default; }
 .rail-nav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-@media (max-width: 760px) { .work-head { grid-template-columns: 1fr; } .rail figure { flex-basis: 76vw; } }
+@media (max-width: 760px) { .work-head { grid-template-columns: 1fr; } .rail { --tile-h: min(88vw, 420px); } }
 
-/* ---------- 4 Lab-grown ---------- */
-.lab { height: 260vh; position: relative; background: var(--night); color: var(--moon); }
-.lab .stick { background: var(--night); }
-.lab-facet { position: absolute; left: 50%; top: 50%; width: min(118vh, 130vw); height: auto; color: var(--moon); opacity: .14; transform: translate(-62%, -50%) rotate(var(--rot, 0deg)); will-change: transform; }
-.lab-grid { position: relative; z-index: 1; height: 100%; display: grid; grid-template-columns: 1fr minmax(280px, 400px); gap: 48px; align-items: center; }
-.lab .h2 { font-size: clamp(44px, 6.6vw, 96px); }
-.facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 34px; }
-.facts li { opacity: calc(.18 + var(--f, 0) * .82); transform: translateY(calc((1 - var(--f, 0)) * 18px)); }
-.facts .h3 { font-size: clamp(22px, 2vw, 28px); margin-bottom: 6px; }
-.facts p { margin: 0; }
-.facts p:not(.h3) { color: var(--moon-2); }
+/* ---------- 4 Lab-grown: the section is a diamond ---------- */
+.lab { height: 300vh; position: relative; background: var(--ivory); }
+.lab .stick { background: var(--ivory); }
+.gem { position: absolute; inset: 0; background: radial-gradient(60% 50% at 50% 70%, #5B1A63 0%, #1A0B22 55%, #0B0710 100%); color: var(--moon); }
+.gem.live { background: #0B0710; }
+.plasma { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.gem-in { position: relative; z-index: 1; height: 100%; }
+.gem-head { position: absolute; left: 0; right: 0; top: calc(var(--crown) + clamp(18px, 3.2vh, 40px)); text-align: center; }
+.gem-head .eyebrow { color: var(--gold-light); margin-bottom: 8px; }
+.gem-head .h2 { font-size: min(6vw, 8.2vh); }
+.facts { position: absolute; left: 50%; top: calc(var(--girdle) + clamp(20px, 4vh, 48px)); transform: translateX(-50%); width: min(calc(var(--gem-w) * .7), 1020px); list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.facts li { padding: 20px 22px 22px; color: var(--moon); opacity: var(--f, 0); transform: translateY(calc((1 - var(--f, 0)) * 26px)); }
+.facts li.glass.on-dark { background: rgba(14, 6, 20, .38); }
+.facts .h3 { font-size: clamp(19px, 1.6vw, 24px); margin: 0 0 6px; }
+.facts p { margin: 0; font-size: 15px; line-height: 1.45; }
+.facts p:not(.h3) { color: #D9CFE0; }
+@supports (corner-shape: bevel) { .facts li { border-radius: 14px; corner-shape: bevel; } }
+/* Rays: gold inside the stone, spectral where they leave it */
+.rays { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.rays-out { z-index: 2; }
+.gem-outline { fill: none; stroke: rgba(207, 162, 90, .55); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.ray-path { fill: none; stroke: #F2D59B; stroke-width: 1.4; stroke-linejoin: round; stroke-dasharray: 1 1; stroke-dashoffset: 1; filter: drop-shadow(0 0 3px rgba(242, 213, 155, .7)); }
+.rays-out .ray-path { stroke: #B88A3E; filter: none; }
+.ray-fan { stroke-width: 1.4; stroke-dasharray: 1 1; stroke-dashoffset: 1; opacity: .95; }
+.ray-star { fill: #CFA25A; opacity: 0; }
+/* Tall, narrow stones (phones): the girdle stretches, so the panels simply stack under the headline */
 @media (max-width: 860px) {
-  .lab-facet { transform: translate(-50%, -62%) rotate(var(--rot, 0deg)); opacity: .1; }
-  .lab-grid { grid-template-columns: 1fr; align-content: center; gap: 36px; }
-  .facts { gap: 22px; }
+  .gem-in { display: flex; flex-direction: column; align-items: center; padding-top: calc(var(--crown) + 26px); }
+  .gem-head { position: static; }
+  .gem-head .h2 { font-size: min(11vw, 6.4vh); }
+  .facts { position: static; transform: none; grid-template-columns: 1fr; width: calc(var(--gem-w) - 2 * var(--gutter)); gap: 10px; margin-top: clamp(18px, 3vh, 30px); }
+  .facts li { padding: 15px 18px; }
+  .facts p { font-size: 14px; }
 }
 
 /* ---------- 5 Visit ---------- */
 .visit { padding: clamp(100px, 13vw, 170px) 0; background: var(--paper); }
 .visit-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(32px, 6vw, 88px); align-items: center; }
-.visit-photo { margin: 0; }
+.visit-photo { margin: 0; position: relative; }
+.visit-photo .cut-line { inset: -14px; width: calc(100% + 28px); height: calc(100% + 28px); }
 .visit-copy .h2 { font-size: clamp(40px, 5vw, 68px); margin-bottom: 22px; }
 .where { display: grid; grid-template-columns: repeat(3, auto); gap: 18px 28px; margin: 34px 0 0; padding-top: 22px; border-top: 1px solid var(--line); font-size: 14px; }
 .where dt { font-weight: 600; margin-bottom: 4px; }
@@ -162,6 +187,7 @@
   .canvas-stick { position: relative; height: 100svh; min-height: 560px; }
   .hero { height: auto; margin-top: -100svh; }
   .hero .stick { position: relative; height: 100svh; min-height: 560px; }
+  .statement { display: none; }
   .lab { height: auto; }
   .process { height: auto; margin-top: 0; padding: 120px 0 100px; background: var(--night); }
   .process > .stick { display: none; }
@@ -174,12 +200,11 @@
   .process-still .h3 { margin-bottom: 8px; }
   .process-still p:not(.h3):not(.eyebrow) { color: var(--moon-2); margin: 0; }
   .facts li { opacity: 1; transform: none; }
-  .lab .stick { position: relative; height: auto; padding: 120px 0; }
-  .lab-facet { transform: translate(-62%, -50%); }
+  .lab { height: auto; }
+  .lab .stick { position: relative; height: 100svh; min-height: 720px; }
   @media (max-width: 860px) { .process-still ol { grid-template-columns: 1fr; } }
 }
 
 /* Short, wide screens: keep the headline from crowding the ring */
-@media (max-width: 1099px) and (min-aspect-ratio: 5/4) { .hero-title { font-size: min(10.5vw, 15vh); } }
 
 @supports (corner-shape: bevel) { .rail-nav button { border-radius: var(--cut-m); corner-shape: bevel; } }

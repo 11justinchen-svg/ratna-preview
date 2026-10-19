@@ -21,6 +21,13 @@ const lerp = (a, b, t) => a + (b - a) * t;
 const IVORY = new THREE.Color("#F8ECDE"); // matches --ivory, the logo's cream
 const NIGHT = new THREE.Color("#0E0D0C");
 const STONE_Y = 3.5; // girdle height above the ring's centre; the band's outer radius is 2.45
+// Hero: the word RATNA, with the ring worn on its T like a ring on a finger
+const CAP = 7; // cap height of the letters, in the same units as the ring
+const WORN_Y = 0.2; // where the band sits on the T's stem
+const WORN_SCALE = 1.45;
+const WORN_TILT = Math.PI / 2 + 0.3; // axis down the stem, front edge tipped down so you look into the ring
+const INK = "#2A2119"; // the dark brown of RATNA in the logo
+let WORD_W = 46; // measured once the letters are set
 
 /* ---------- Diamond geometry (radius 1 ≈ a 2 ct round, about 8.1 mm across) ---------- */
 function brilliantPoints() {
@@ -418,6 +425,123 @@ function shadowTexture() {
   return new THREE.CanvasTexture(c);
 }
 
+/* ---------- The word ---------- */
+// Five letter planes set in Cinzel (the free face closest to the logo's Roman capitals), spaced
+// like the logo, centred on the T so the ring can be worn on its stem. Each letter is its own
+// plane so the word can come apart on scroll.
+function wordmark() {
+  const letters = [];
+  const px = 420,
+    pad = 28,
+    gap = CAP * 0.52;
+  const ctx = document.createElement("canvas").getContext("2d");
+  ctx.font = `400 ${px}px Cinzel, "Times New Roman", serif`;
+  const glyphs = [..."RATNA"].map((ch) => {
+    const m = ctx.measureText(ch);
+    return {
+      ch,
+      m,
+      w: m.actualBoundingBoxLeft + m.actualBoundingBoxRight,
+      asc: m.actualBoundingBoxAscent,
+      desc: Math.max(0, m.actualBoundingBoxDescent),
+    };
+  });
+  const capPx = glyphs.find((g) => g.ch === "T").asc;
+  const k = CAP / capPx; // world units per canvas pixel
+  // Ink boxes laid out left to right, then shifted so the T's centre sits at x = 0
+  let x = 0;
+  const lefts = glyphs.map((g) => {
+    const l = x;
+    x += g.w * k + gap;
+    return l;
+  });
+  const shift = lefts[2] + (glyphs[2].w * k) / 2;
+  WORD_W = x - gap;
+  glyphs.forEach((g, i) => {
+    const c = document.createElement("canvas");
+    c.width = Math.ceil(g.w + pad * 2);
+    c.height = Math.ceil(g.asc + g.desc + pad * 2);
+    const cx = c.getContext("2d");
+    cx.font = ctx.font;
+    cx.fillStyle = INK;
+    cx.fillText(g.ch, pad + g.m.actualBoundingBoxLeft, pad + g.asc);
+    const tex = new THREE.CanvasTexture(c);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = 8;
+    const mat = new THREE.MeshBasicMaterial({
+      map: tex,
+      transparent: true,
+      depthWrite: false,
+      toneMapped: false,
+    });
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(c.width * k, c.height * k),
+      mat,
+    );
+    // Baseline at -CAP/2, so the capitals are centred on y = 0
+    const baseX = lefts[i] - shift + (g.w * k) / 2;
+    mesh.position.set(baseX, -CAP / 2 - (c.height / 2 - (pad + g.asc)) * k, 0);
+    mesh.userData = { baseX, baseY: mesh.position.y, side: Math.sign(i - 2) };
+    mesh.renderOrder = 2; // after the metal: the stem hides the back of the band, the front of the band hides the stem
+    letters.push(mesh);
+  });
+  return { letters, width: WORD_W };
+}
+
+// The light a diamond throws: not a water web but scattered flecks of spectrum on the wall,
+// streaking outward from the stone, each split red to violet along its length (that split is
+// dispersion, the "fire"). The pattern turns with the stone, so the flecks wheel as it swings.
+function causticMaterial() {
+  return new THREE.ShaderMaterial({
+    depthTest: false,
+    depthWrite: false,
+    uniforms: {
+      uTime: { value: 0 },
+      uBg: { value: new THREE.Vector3() },
+      uStone: { value: new THREE.Vector2() },
+      uRes: { value: new THREE.Vector2(1, 1) },
+      uAmount: { value: 1 },
+      uSpin: { value: 0 },
+    },
+    vertexShader:
+      "void main() { gl_Position = vec4(position.xy, 0.9999, 1.0); }",
+    fragmentShader: `
+      uniform float uTime; uniform vec3 uBg; uniform vec2 uStone; uniform vec2 uRes; uniform float uAmount; uniform float uSpin;
+      float hash(float n) { return fract(sin(n * 127.1) * 43758.5453); }
+      vec3 spectrum(float x) { // red → yellow → green → blue → violet, soft-edged
+        x = clamp(x, 0.0, 1.0);
+        return clamp(vec3(abs(x * 6.0 - 3.0) - 1.0, 2.0 - abs(x * 6.0 - 2.0), 2.0 - abs(x * 6.0 - 4.0)), 0.0, 1.0);
+      }
+      vec4 flecks(vec2 d, float n, float seed) {
+        float r = length(d);
+        float a = atan(d.y, d.x) + uSpin * (1.0 + seed * 0.4);
+        float sector = floor((a + 3.14159265) / 6.2831853 * n);
+        float h1 = hash(sector + seed), h2 = hash(sector * 1.7 + seed + 3.1), h3 = hash(sector * 2.3 + seed + 7.7);
+        if (h1 < 0.8) return vec4(0.0);
+        float ac = ((sector + 0.5 + (h2 - 0.5) * 0.5) / n) * 6.2831853 - 3.14159265;
+        float da = (a - ac) * r;                       // distance across the streak
+        float rc = 0.14 + pow(h3, 0.8) * 0.7;          // how far from the stone it lands
+        float len = 0.012 + h2 * 0.03;                 // streak length
+        float wid = 0.0028 + h1 * 0.0026;              // streak width
+        float u = (r - rc) / len;                      // -1..1 along the streak
+        float shape = smoothstep(1.0, 0.55, abs(u)) * exp(-pow(da / wid, 2.0));
+        float twinkle = 0.55 + 0.45 * sin(uTime * (0.6 + h2) + h3 * 40.0);
+        return vec4(spectrum(u * 0.5 + 0.5), shape * twinkle * smoothstep(0.92, 0.2, r));
+      }
+      void main() {
+        vec2 d = (gl_FragCoord.xy - uStone) / uRes.y;
+        vec4 f1 = flecks(d, 70.0, 0.0);
+        vec4 f2 = flecks(d, 131.0, 11.0);
+        vec3 col = uBg;
+        col = mix(col, mix(uBg, f1.rgb, 0.8), f1.a * 0.55 * uAmount);
+        col = mix(col, mix(uBg, f2.rgb, 0.7), f2.a * 0.35 * uAmount);
+        float glow = exp(-length(d) * 7.0) * 0.05 * uAmount; // a breath of warm light around the stone
+        col += glow * vec3(1.0, 0.92, 0.78);
+        gl_FragColor = vec4(col, 1.0);
+      }`,
+  });
+}
+
 /* ---------- Camera shots ---------- */
 // Each shot: where the camera looks, how far it stands, how high it looks down from.
 function shots(aspect, compact) {
@@ -425,13 +549,13 @@ function shots(aspect, compact) {
     fitW = 4.9 / (0.66 * 0.425 * aspect);
   const d = Math.max(fitH, fitW);
   const portrait = aspect < 0.8;
+  // Hero: the whole word across a wide screen, letters just kissing the edges. On a phone the
+  // word is cropped to the T and the ring, like a poster.
+  const heroD = portrait
+    ? (CAP * 2.25) / (0.425 * aspect)
+    : Math.max((WORD_W * 0.94) / (0.425 * aspect), CAP / (0.46 * 0.425));
   return {
-    hero: {
-      tx: 0,
-      ty: portrait ? 0.4 : -1.25,
-      d: compact ? d * 1.3 : d,
-      pitch: 0.2,
-    },
+    hero: { tx: 0, ty: portrait ? -0.6 : -1.4, d: heroD, pitch: 0.07 },
     stone: {
       tx: 0,
       ty: STONE_Y,
@@ -459,7 +583,7 @@ function stateFor(hero, proc) {
     s.bg = ease(range(hero, 0.35, 0.85));
     s.metal = 1 - range(hero, 0.45, 0.8);
     s.cast = 99;
-    s.yaw = -0.85 + hero * 0.8;
+    s.yaw = lerp(-0.85, -0.05, ease(range(hero, 0.25, 0.9)));
   } else {
     if (proc < 0.42) {
       s.shotFrom = "stone";
@@ -496,6 +620,11 @@ function stateFor(hero, proc) {
       ? [range(hero, 0.82, 0.97), 0, 0]
       : [1 - range(proc, 0.11, 0.14), w(0.11, 0.2), w(0.2, 0.29)];
   s.offset = proc > 0 ? ease(range(proc, 0, 0.06)) : 0;
+  // Hero only: 1 while the ring is worn on the T, 0 once it stands on its own
+  s.worn = proc > 0 ? 0 : 1 - ease(range(hero, 0.18, 0.6));
+  s.part = proc > 0 ? 1 : ease(range(hero, 0.1, 0.5)); // the letters come apart
+  s.word = proc > 0 ? 0 : 1 - range(hero, 0.3, 0.55);
+  s.caustics = proc > 0 ? 0 : 1 - range(hero, 0.25, 0.6);
   return s;
 }
 
@@ -505,7 +634,8 @@ function Ring({ still }) {
   const group = useRef(),
     stone = useRef(),
     shadow = useRef(),
-    glints = useRef();
+    glints = useRef(),
+    word = useRef();
   const parts = useMemo(() => {
     const studio = studioScene();
     const pmrem = new THREE.PMREMGenerator(gl);
@@ -576,6 +706,9 @@ function Ring({ still }) {
       glintMap: glintTexture(),
       facetKey: "",
       crown: [],
+      word: still ? null : wordmark(),
+      caustics: still ? null : causticMaterial(),
+      stoneWorld: new THREE.Vector3(),
     };
   }, [gl]);
 
@@ -608,11 +741,7 @@ function Ring({ still }) {
     // Where the ring sits on screen: beside the text when there's room, above it on phones.
     // On short, wide screens the hero's headline fills the left, so the ring moves right.
     const side = size.width >= 1100 || (aspect >= 1.25 && size.width >= 700);
-    const compact = size.width < 1100 && aspect >= 1.25;
-    const ox =
-      proc > 0
-        ? (side ? 0.13 : 0) * s.offset
-        : (compact ? 0.3 : 0) * (1 - s.shotT);
+    const ox = proc > 0 ? (side ? 0.13 : 0) * s.offset : 0;
     const oy = proc > 0 && !side ? 0.17 * s.offset : 0;
     if (still || (!ox && !oy)) camera.clearViewOffset();
     else
@@ -633,9 +762,53 @@ function Ring({ still }) {
         still === "cad" ? NIGHT : new THREE.Color("#1A1816"),
       );
 
-    // Ring: a slow breath of rotation on top of the scroll, so it never looks frozen
-    const idle = reduced || still ? 0 : Math.sin(t * 0.35) * 0.07;
-    group.current.rotation.y = s.yaw + idle;
+    // Ring: worn on the T in the hero (axis down the stem, stone facing out, swinging gently
+    // round the letter), then lifted off and stood upright for the close-up. A slow breath of
+    // rotation on top of the scroll keeps it from ever looking frozen.
+    const worn = still ? 0 : s.worn;
+    const idle =
+      reduced || still ? 0 : Math.sin(t * 0.35) * lerp(0.07, 0.32, worn);
+    const g = group.current;
+    g.rotation.order = "YXZ";
+    g.rotation.x = WORN_TILT * worn;
+    g.rotation.y = lerp(s.yaw, 0, worn) + idle;
+    g.position.set(0, WORN_Y * worn, 0);
+    g.scale.setScalar(lerp(1, WORN_SCALE, worn));
+
+    // The word comes apart: left letters drift left, right letters right, the T sinks out of the ring
+    if (parts.word) {
+      word.current.visible = s.word > 0.001;
+      parts.word.letters.forEach((m) => {
+        const { baseX, baseY, side } = m.userData;
+        m.position.x =
+          baseX + side * s.part * (CAP * 1.8 + Math.abs(baseX) * 0.35);
+        m.position.y = baseY - (side === 0 ? s.part * CAP * 1.6 : 0);
+        m.rotation.y = side * s.part * 0.5;
+        m.material.opacity =
+          s.word * (side === 0 ? 1 - range(s.part, 0.2, 0.7) : 1);
+      });
+    }
+
+    // Caustics on the wall: follow the stone on screen, fade with the daylight
+    if (parts.caustics) {
+      const u = parts.caustics.uniforms;
+      const dpr = state.gl.getPixelRatio();
+      u.uTime.value = reduced ? 0 : t;
+      u.uRes.value.set(size.width * dpr, size.height * dpr);
+      u.uAmount.value = s.caustics;
+      u.uSpin.value = group.current.rotation.y * 2.0;
+      const bg = scene.background;
+      u.uBg.value.set(
+        ...[bg.r, bg.g, bg.b].map((v) =>
+          v <= 0.0031308 ? v * 12.92 : 1.055 * Math.pow(v, 1 / 2.4) - 0.055,
+        ),
+      );
+      stone.current.getWorldPosition(parts.stoneWorld).project(camera);
+      u.uStone.value.set(
+        (parts.stoneWorld.x * 0.5 + 0.5) * size.width * dpr,
+        (parts.stoneWorld.y * 0.5 + 0.5) * size.height * dpr,
+      );
+    }
     parts.metal.opacity = s.metal;
     parts.metal.visible = s.metal > 0.002;
     parts.castPlane.constant = s.cast;
@@ -647,7 +820,7 @@ function Ring({ still }) {
       w.line.geometry.setDrawRange(0, Math.floor((w.count * d) / 2) * 2);
     });
     shadow.current.material.opacity =
-      (1 - s.bg) * Math.max(s.metal, 0) * (still ? 0 : 1);
+      (1 - s.bg) * Math.max(s.metal, 0) * (still ? 0 : 1) * (1 - worn);
 
     // Stone: turns while it's alone, settles back into the setting, then keeps a little sparkle moving
     stone.current.morphTargetInfluences.splice(
@@ -701,7 +874,20 @@ function Ring({ still }) {
     });
   });
 
-  return html` <group ref=${group}>
+  return html` ${parts.caustics &&
+    html`<mesh
+      frustumCulled=${false}
+      renderOrder=${-10}
+      material=${parts.caustics}
+      ><planeGeometry args=${[2, 2]}
+    /></mesh>`}
+    ${parts.word &&
+    html`<group ref=${word}
+      >${parts.word.letters.map(
+        (m, i) => html`<primitive key=${"l" + i} object=${m} />`,
+      )}</group
+    >`}
+    <group ref=${group}>
       ${parts.solid.map(
         (g, i) =>
           html`<mesh key=${"m" + i} geometry=${g} material=${parts.metal} />`,
@@ -774,10 +960,16 @@ function App({ still }) {
     </${Canvas}>`;
 }
 
-function mount(el, still) {
+async function mount(el, still) {
   try {
     const probe = document.createElement("canvas");
-    if (!probe.getContext("webgl2") && !probe.getContext("webgl")) return; // keep the drawn poster
+    if (!probe.getContext("webgl2") && !probe.getContext("webgl")) return; // keep the HTML fallback
+    // The letters are drawn into textures, so Cinzel has to be loaded first (but never wait long)
+    if (!still)
+      await Promise.race([
+        document.fonts.load("400 100px Cinzel"),
+        new Promise((r) => setTimeout(r, 2500)),
+      ]);
     createRoot(el).render(html`<${App} still=${still} />`);
   } catch (err) {
     console.warn("3D ring unavailable:", err);

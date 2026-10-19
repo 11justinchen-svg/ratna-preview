@@ -263,6 +263,90 @@
   }
   document.querySelectorAll(".glass").forEach(refract);
 
+  /* ---------- The loupe ----------
+     A jeweller's loupe in liquid glass: an octagonal lens that follows the pointer over the hero
+     and the gallery, magnifying what's under it 1.8x and bending it at the rim. The map pulls
+     every pixel toward the centre (magnification) plus a little extra inside the bezel (the lens
+     edge). Chromium only, and only with a real pointer: it means nothing on touch. */
+  function sdOctagon(x, y, r) {
+    const kx = -0.9238795325, ky = 0.3826834323, kz = 0.4142135623;
+    x = Math.abs(x); y = Math.abs(y);
+    let d = 2 * Math.min(kx * x + ky * y, 0); x -= d * kx; y -= d * ky;
+    d = 2 * Math.min(-kx * x + ky * y, 0); x -= d * -kx; y -= d * ky;
+    x -= Math.min(Math.max(x, -kz * r), kz * r); y -= r;
+    return Math.hypot(x, y) * Math.sign(y);
+  }
+  function loupe() {
+    const regions = document.querySelectorAll("[data-loupe]");
+    if (!regions.length || !chromium || !matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const S = 196, mag = 1.8, bezel = 16, maxShift = S / 2 * (1 - 1 / mag) + 12;
+    const c = document.createElement("canvas");
+    c.width = c.height = S;
+    const ctx = c.getContext("2d");
+    const img = ctx.createImageData(S, S);
+    for (let y = 0; y < S; y++) {
+      for (let x = 0; x < S; x++) {
+        const px = x + 0.5 - S / 2, py = y + 0.5 - S / 2;
+        const sd = sdOctagon(px, py, S / 2);
+        let dx = -px * (1 - 1 / mag), dy = -py * (1 - 1 / mag);
+        if (sd > -bezel && sd < 0) {
+          const t = 1 - -sd / bezel, k = t * t * 10;
+          const len = Math.hypot(px, py) || 1;
+          dx -= (px / len) * k; dy -= (py / len) * k;
+        }
+        const i = (y * S + x) * 4;
+        img.data[i] = 128 + (dx / maxShift) * 127;
+        img.data[i + 1] = 128 + (dy / maxShift) * 127;
+        img.data[i + 2] = 128;
+        img.data[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+    const f = document.createElementNS(NS, "filter");
+    f.id = "loupe-fx";
+    f.setAttribute("filterUnits", "userSpaceOnUse");
+    f.setAttribute("x", "0"); f.setAttribute("y", "0");
+    f.setAttribute("width", S); f.setAttribute("height", S);
+    f.setAttribute("color-interpolation-filters", "sRGB");
+    f.innerHTML = `<feImage href="${c.toDataURL()}" x="0" y="0" width="${S}" height="${S}" result="map"/>
+      <feDisplacementMap in="SourceGraphic" in2="map" scale="${maxShift * 2}" xChannelSelector="R" yChannelSelector="G"/>`;
+    defs.appendChild(f);
+
+    const el = document.createElement("div");
+    el.className = "loupe";
+    el.setAttribute("aria-hidden", "true");
+    const oct = "29.3,0 70.7,0 100,29.3 100,70.7 70.7,100 29.3,100 0,70.7 0,29.3";
+    el.innerHTML = `<div class="loupe-lens"></div><svg class="loupe-edge" viewBox="0 0 100 100"><polygon class="loupe-rim" points="${oct}"/><polygon class="loupe-shine" points="${oct}"/></svg>`;
+    el.style.setProperty("--s", S + "px");
+    document.body.appendChild(el);
+    const lens = el.querySelector(".loupe-lens"), edge = el.querySelector(".loupe-edge");
+    lens.style.backdropFilter = "url(#loupe-fx) saturate(112%) contrast(1.04)";
+    // No opacity on the lens or anything above it: in Chromium that makes a backdrop root and
+    // the glass would sample nothing. The lens opens from its centre instead; only the rim fades.
+    const OCT = [[29.3, 0], [70.7, 0], [100, 29.3], [100, 70.7], [70.7, 100], [29.3, 100], [0, 70.7], [0, 29.3]];
+    const clipAt = (k) => `polygon(${OCT.map(([a, b]) => `${50 + (a - 50) * k}% ${50 + (b - 50) * k}%`).join(",")})`;
+
+    let tx = -999, ty = -999, x = tx, y = ty, on = false, shown = 0;
+    regions.forEach((r) => {
+      r.addEventListener("pointermove", (e) => { if (e.pointerType !== "mouse") return; tx = e.clientX; ty = e.clientY; on = true; if (x < -900) { x = tx; y = ty; } });
+      r.addEventListener("pointerleave", () => { on = false; });
+    });
+    addEventListener("scroll", () => { if (on) shown = Math.max(shown, 0.6); }, { passive: true });
+    const tick = () => {
+      const k = reduced ? 1 : 0.22;
+      x += (tx - x) * k; y += (ty - y) * k;
+      shown += ((on ? 1 : 0) - shown) * (reduced ? 1 : 0.18);
+      el.style.transform = `translate3d(${x - S / 2}px, ${y - S / 2}px, 0)`;
+      el.style.visibility = shown < 0.01 ? "hidden" : "visible";
+      lens.style.clipPath = clipAt(Math.min(1, shown * 1.04));
+      edge.style.opacity = shown;
+      edge.style.transform = `scale(${0.9 + shown * 0.1})`;
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }
+  loupe();
+
   /* ---------- Smooth scroll ---------- */
   let lenis = null;
   const frameFns = [];
