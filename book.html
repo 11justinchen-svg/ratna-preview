@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Book a consultation · Ratna by Batra</title>
+<meta name="description" content="Book a private consultation or request a custom quote for a lab-grown diamond engagement ring, wedding band or fine jewellery piece.">
+<meta name="theme-color" content="#F4F0E8">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="stylesheet" href="assets/site.css">
+<link rel="stylesheet" href="assets/book.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<nav class="nav glass" aria-label="Main">
+  <a class="brand" href="index.html" aria-label="Ratna by Batra, home">
+    <svg viewBox="0 0 100 100" data-facet-mark aria-hidden="true"></svg>
+    <span class="wordmark">Ratna <i>by</i> Batra</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html#process">Process</a></li>
+    <li><a href="index.html#work">Work</a></li>
+    <li><a href="index.html#lab">Lab-grown</a></li>
+    <li><a href="index.html#visit">Visit</a></li>
+  </ul>
+  <a class="btn" href="book.html" aria-current="page">Book</a>
+  <button class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="sheet"><span></span><span></span></button>
+</nav>
+<div class="sheet glass" id="sheet">
+  <a href="index.html#process">Process</a>
+  <a href="index.html#work">Work</a>
+  <a href="index.html#lab">Lab-grown</a>
+  <a href="index.html#visit">Visit</a>
+</div>
+
+<main id="main" class="book" data-mode="consult">
+  <header class="wrap book-head">
+    <h1 class="h2 title">
+      <span class="t-consult">Book a consultation.</span>
+      <span class="t-quote">Request a quote.</span>
+    </h1>
+    <p class="lede sub">
+      <span class="t-consult">About thirty minutes, at our Yonge Street studio or on a call. Pick a time and we'll confirm by email.</span>
+      <span class="t-quote">Tell us what you're imagining. We'll come back with stone options, a price range and a first sketch.</span>
+    </p>
+    <div class="seg glass" role="tablist" aria-label="What would you like to do?">
+      <span class="seg-thumb" aria-hidden="true"></span>
+      <button role="tab" id="tab-consult" aria-controls="consult" aria-selected="true" data-mode="consult">Consultation</button>
+      <button role="tab" id="tab-quote" aria-controls="quote" aria-selected="false" data-mode="quote">Custom quote</button>
+    </div>
+  </header>
+
+  <div class="wrap book-grid">
+    <!-- Sticky preview, like Apple's configurator: it redraws as you choose -->
+    <aside class="preview" aria-label="Your selection">
+      <div class="card">
+        <div class="pv-consult">
+          <svg class="pv-mark" viewBox="0 0 100 100" data-facet-mark aria-hidden="true"></svg>
+          <p class="pv-caption">One stone, one conversation.<br><span>About thirty minutes · studio or video</span></p>
+        </div>
+        <div class="pv-quote">
+          <svg class="pv-ring" viewBox="0 0 1024 1024" aria-hidden="true">
+            <defs>
+              <linearGradient id="sheen" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff" stop-opacity=".75"/>
+                <stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+                <stop offset=".8" stop-color="#000" stop-opacity=".12"/>
+                <stop offset="1" stop-color="#fff" stop-opacity=".35"/>
+              </linearGradient>
+            </defs>
+            <path class="band" fill-rule="evenodd" d="M143 400a371 152 0 1 0 742 0a371 152 0 1 0 -742 0ZM192 395a322 108 0 1 0 644 0a322 108 0 1 0 -644 0Z"/>
+            <path class="band sheen" fill="url(#sheen)" fill-rule="evenodd" d="M143 400a371 152 0 1 0 742 0a371 152 0 1 0 -742 0ZM192 395a322 108 0 1 0 644 0a322 108 0 1 0 -644 0Z"/>
+            <g class="pv-stone"></g>
+          </svg>
+        </div>
+      </div>
+      <dl class="summary" aria-live="polite"></dl>
+    </aside>
+
+    <div class="panels">
+      <!-- Consultation -->
+      <form id="consult" class="panel" role="tabpanel" aria-labelledby="tab-consult" novalidate>
+        <fieldset class="q" data-key="interest" data-label="Looking for">
+          <legend class="h3">What are you looking for?</legend>
+          <div class="tiles cols-2">
+            <label class="tile"><input type="radio" name="interest" value="Engagement ring" required><b>Engagement ring</b><span>Custom, from the stone up.</span></label>
+            <label class="tile"><input type="radio" name="interest" value="Wedding bands"><b>Wedding bands</b><span>For one of you, or both.</span></label>
+            <label class="tile"><input type="radio" name="interest" value="Fine jewellery"><b>Fine jewellery</b><span>Earrings, pendants, bracelets.</span></label>
+            <label class="tile"><input type="radio" name="interest" value="Just exploring"><b>Just exploring</b><span>Learn about lab-grown first.</span></label>
+          </div>
+          <p class="err" role="alert"></p>
+        </fieldset>
+
+        <fieldset class="q" data-key="where" data-label="Where">
+          <legend class="h3">How would you like to meet?</legend>
+          <div class="tiles">
+            <label class="tile row"><input type="radio" name="where" value="At the studio" required><b>At the studio</b><span>Suite 1100, 151 Yonge Street, Toronto</span></label>
+            <label class="tile row"><input type="radio" name="where" value="Video call"><b>Video call</b><span>From anywhere. We'll send a link.</span></label>
+            <label class="tile row"><input type="radio" name="where" value="Phone call"><b>Phone call</b><span>We'll call the number you give us.</span></label>
+          </div>
+          <p class="err" role="alert"></p>
+        </fieldset>
+
+        <fieldset class="q" data-key="when" data-label="When">
+          <legend class="h3">Pick a time.</legend>
+          <p class="hint">Toronto time. Tuesday to Saturday.</p>
+          <div class="days" role="radiogroup" aria-label="Day"></div>
+          <div class="times" role="radiogroup" aria-label="Time"></div>
+          <p class="err" role="alert"></p>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend class="h3">About you.</legend>
+          <div class="fields">
+            <label class="field"><input name="name" autocomplete="name" placeholder=" " required><span>Full name</span></label>
+            <label class="field"><input name="email" type="email" autocomplete="email" placeholder=" " required><span>Email</span></label>
+            <label class="field"><input name="phone" type="tel" autocomplete="tel" placeholder=" "><span>Phone <em>(optional)</em></span></label>
+            <label class="field select"><select name="budget"><option value="">Prefer not to say</option><option>Under $2,500</option><option>$2,500 to $5,000</option><option>$5,000 to $10,000</option><option>$10,000 and up</option></select><span>Budget, in CAD <em>(optional)</em></span></label>
+            <label class="field wide"><textarea name="notes" rows="3" placeholder=" "></textarea><span>Anything we should know? <em>(optional)</em></span></label>
+          </div>
+          <p class="err" role="alert"></p>
+        </fieldset>
+
+        <div class="submit-row">
+          <button class="btn big" type="submit">Request this time</button>
+          <p class="small">No payment and no obligation. You can reschedule from the confirmation email.</p>
+        </div>
+      </form>
+
+      <!-- Custom quote -->
+      <form id="quote" class="panel" role="tabpanel" aria-labelledby="tab-quote" novalidate hidden>
+        <fieldset class="q" data-key="piece" data-label="Piece">
+          <legend class="h3">What should we make?</legend>
+          <div class="tiles cols-3">
+            <label class="tile"><input type="radio" name="piece" value="Engagement ring" required checked><b>Engagement ring</b></label>
+            <label class="tile"><input type="radio" name="piece" value="Wedding band"><b>Wedding band</b></label>
+            <label class="tile"><input type="radio" name="piece" value="Earrings"><b>Earrings</b></label>
+            <label class="tile"><input type="radio" name="piece" value="Pendant"><b>Pendant</b></label>
+            <label class="tile"><input type="radio" name="piece" value="Bracelet"><b>Bracelet</b></label>
+            <label class="tile"><input type="radio" name="piece" value="Something else"><b>Something else</b></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q" data-key="shape" data-label="Shape">
+          <legend class="h3">Choose a shape.</legend>
+          <p class="hint">Not sure? Pick the one you keep looking at. You can change it in the consultation.</p>
+          <div class="tiles shapes cols-4"></div>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend class="h3">How big?</legend>
+          <div class="carat">
+            <output for="carat" class="carat-out">1.50 ct</output>
+            <input id="carat" name="carat" type="range" min="0.5" max="5" step="0.25" value="1.5" aria-label="Carat weight">
+            <div class="carat-scale small" aria-hidden="true"><span>0.5 ct</span><span>5 ct</span></div>
+            <label class="check"><input type="checkbox" name="caratHelp"> Help me choose a size</label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q" data-key="metal" data-label="Metal">
+          <legend class="h3">Choose a metal.</legend>
+          <div class="tiles metals cols-4">
+            <label class="tile"><input type="radio" name="metal" value="Platinum" required checked><i style="--m:#E3E1DC"></i><b>Platinum</b></label>
+            <label class="tile"><input type="radio" name="metal" value="18k white gold"><i style="--m:#ECEAE4"></i><b>18k white gold</b></label>
+            <label class="tile"><input type="radio" name="metal" value="18k yellow gold"><i style="--m:#E2BF78"></i><b>18k yellow gold</b></label>
+            <label class="tile"><input type="radio" name="metal" value="18k rose gold"><i style="--m:#E4B49B"></i><b>18k rose gold</b></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend class="h3">Budget and timing.</legend>
+          <div class="fields">
+            <label class="field select"><select name="budget"><option value="">Not sure yet</option><option>Under $2,500</option><option>$2,500 to $5,000</option><option>$5,000 to $10,000</option><option>$10,000 and up</option></select><span>Budget, in CAD</span></label>
+            <label class="field select"><select name="timeline"><option>No rush</option><option>Within a month</option><option>In 1 to 3 months</option><option>For a specific date</option></select><span>When do you need it?</span></label>
+            <label class="field"><input name="ringSize" placeholder=" "><span>Ring size <em>(if you know it)</em></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend class="h3">Show us what you love.</legend>
+          <label class="drop">
+            <input type="file" name="photos" accept="image/*" multiple>
+            <b>Add inspiration photos</b>
+            <span>Screenshots, Pinterest saves, a ring you saw once. Up to 6.</span>
+          </label>
+          <div class="thumbs"></div>
+          <div class="fields">
+            <label class="field wide"><textarea name="details" rows="4" placeholder=" "></textarea><span>Describe it in your own words <em>(optional)</em></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend class="h3">Where should we send it?</legend>
+          <div class="fields">
+            <label class="field"><input name="name" autocomplete="name" placeholder=" " required><span>Full name</span></label>
+            <label class="field"><input name="email" type="email" autocomplete="email" placeholder=" " required><span>Email</span></label>
+            <label class="field"><input name="phone" type="tel" autocomplete="tel" placeholder=" "><span>Phone <em>(optional)</em></span></label>
+          </div>
+          <p class="err" role="alert"></p>
+        </fieldset>
+
+        <div class="submit-row">
+          <button class="btn big" type="submit">Send for a quote</button>
+          <p class="small">Free, and there's no obligation. Most quotes include two or three stone options.</p>
+        </div>
+      </form>
+
+      <!-- Confirmation: the facet draws itself one last time -->
+      <section class="done" hidden tabindex="-1" aria-live="polite">
+        <svg class="done-mark" viewBox="0 0 100 100" aria-hidden="true"></svg>
+        <h2 class="h2 done-title"></h2>
+        <p class="lede done-text"></p>
+        <dl class="summary done-summary"></dl>
+        <p class="preview-note small">This is a preview of the new site. On the live site, this request goes straight to sales@ratnabybatra.com and the calendar.</p>
+        <p><a class="link" href="index.html">Back to Ratna by Batra ›</a></p>
+      </section>
+    </div>
+  </div>
+
+  <!-- Mobile: the summary and the action ride along in a glass bar -->
+  <div class="mbar glass" aria-hidden="true">
+    <span class="mbar-text"></span>
+    <button class="btn" type="button">Continue</button>
+  </div>
+</main>
+
+<footer class="mini wrap">
+  <span class="wordmark">Ratna <i>by</i> Batra</span>
+  <span class="small">Suite 1100, 151 Yonge Street, Toronto · <a href="tel:+16475126001">647-512-6001</a> · <a href="mailto:sales@ratnabybatra.com">sales@ratnabybatra.com</a></span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.13/dist/lenis.min.js"></script>
+<script src="assets/site.js"></script>
+<script src="assets/book.js"></script>
+</body>
+</html>

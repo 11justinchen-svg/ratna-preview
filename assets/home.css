@@ -1,0 +1,184 @@
+/* Home: scene storyboard
+   1 Hero       240vh pinned  the 3D ring turns on ivory; the room goes dark until only the stone is lit
+   2 Process    640vh pinned  the stone turns and changes shape (oval → radiant → pear → round); the setting
+                              draws itself as a CAD wireframe; metal is cast up through it as night turns to day
+   3 Work       auto          gallery rail (placeholders until real photos), native swipe, filters
+   4 Lab-grown  260vh pinned  the facet drawing turns while three facts arrive in order
+   5 Visit      auto          the consultation
+   6 Finale     auto          ask + giant wordmark + the facet mark
+   One canvas serves scenes 1 and 2: it is pinned behind both, and each scene pins only its text. */
+
+.stick { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+
+.story { position: relative; }
+.canvas-stick { position: sticky; top: 0; height: 100vh; height: 100svh; background: var(--ivory); overflow: hidden; }
+.ring3d { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s var(--ease); }
+.ring3d.ready { opacity: 1; }
+.ring3d canvas { display: block; touch-action: pan-y; }
+/* Until WebGL is up (or if it never is), the stone's drawing holds the frame */
+.poster { position: absolute; left: 50%; top: 42%; width: min(26vh, 40vw); height: auto; transform: translate(-50%, -50%); color: var(--ink); opacity: .5; transition: opacity .8s; }
+.ready ~ .poster { opacity: 0; }
+
+/* ---------- 1 Hero ---------- */
+.hero { height: 240vh; margin-top: -100vh; margin-top: -100svh; position: relative; }
+.hero-copy {
+  position: absolute; inset: auto 0 0; padding-bottom: clamp(28px, 6vh, 64px);
+  display: grid; grid-template-columns: 1fr minmax(260px, 340px); gap: 32px; align-items: end;
+  will-change: transform, opacity;
+}
+.hero-title { font-size: clamp(56px, 8vw, 150px); }
+.hero-title .ln > span { white-space: nowrap; }
+.hero-side p { margin: 0; font-size: 17px; color: var(--ink-2); }
+.hero-side .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 20px; }
+@media (max-width: 1099px) {
+  .hero-copy { grid-template-columns: 1fr; gap: 22px; }
+  .hero-title { font-size: 10.5vw; }
+  .hero-side { max-width: 520px; }
+}
+@media (max-aspect-ratio: 4/5) {
+  .hero-copy { inset: 0; grid-template-columns: 1fr; grid-template-rows: 1fr auto; padding-top: 92px; align-items: start; }
+  .hero-title { font-size: clamp(40px, 12.6vw, 96px); }
+  .hero-side { align-self: end; }
+}
+@media (max-aspect-ratio: 4/5) and (max-height: 700px) { .hero-side p:first-child { display: none; } }
+
+/* ---------- 2 Process ---------- */
+/* Pulled up under the hero's last screen so its text pins the instant the hero ends */
+.process { height: 640vh; margin-top: -100vh; margin-top: -100svh; position: relative; color: var(--moon); }
+.process.is-light { color: var(--ink); }
+.story-text { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; }
+.slot { position: relative; width: min(340px, 30vw); min-height: 250px; pointer-events: auto; }
+.say { position: absolute; inset: 0 auto auto 0; width: 100%; }
+.say > * { margin: 0; transform: translateY(24px); opacity: 0; transition: transform .9s var(--ease), opacity .6s; }
+.say .eyebrow { color: var(--gold-light); margin-bottom: 10px; }
+.say .h3 { font-size: clamp(30px, 3vw, 44px); letter-spacing: -.028em; margin-bottom: 14px; }
+.say p:not(.h3):not(.eyebrow) { color: var(--moon-2); font-size: 17px; }
+.say .spec { margin-top: 14px; font-size: 14px !important; color: var(--moon) !important; }
+.say.on > * { transform: none; opacity: 1; }
+.say.on > :nth-child(2) { transition-delay: .06s; }
+.say.on > :nth-child(3) { transition-delay: .12s; }
+.say.on > :nth-child(4) { transition-delay: .18s; }
+.say.off > * { transform: translateY(-24px); opacity: 0; }
+.shape-name { color: var(--moon); font-weight: 600; }
+.shape-line.swap span { display: inline-block; animation: shape-in .7s var(--ease) both; }
+.shape-line.swap .shape-note { animation-delay: .05s; }
+@keyframes shape-in { from { opacity: 0; transform: translateY(10px); } }
+.process.is-light .say .eyebrow { color: var(--gold); }
+.process.is-light .say p:not(.h3):not(.eyebrow) { color: var(--ink-2); }
+.process.is-light .shape-name, .process.is-light .say .spec { color: var(--ink) !important; }
+.steps { position: absolute; left: 0; right: 0; bottom: clamp(22px, 5vh, 48px); display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; list-style: none; padding: 0; font-size: 14px; color: var(--moon-2); }
+.steps li { display: grid; gap: 10px; transition: color .4s; }
+.steps li.on { color: var(--moon); }
+.process.is-light .steps { color: var(--ink-2); }
+.process.is-light .steps li.on { color: var(--ink); }
+.steps i { display: block; height: 2px; border-radius: 2px; background: rgba(168, 162, 152, .28); overflow: hidden; }
+.steps i::after { content: ""; display: block; height: 100%; background: currentColor; transform-origin: left; transform: scaleX(var(--p, 0)); }
+.process-still { display: none; }
+/* Stacked (text under the ring) unless the screen is wide enough for text beside it.
+   ring3d.js uses the same rule to decide which way to move the ring. */
+@media (max-width: 1099px) and (max-aspect-ratio: 5/4), (max-width: 699px) {
+  .story-text { align-items: flex-end; padding-bottom: calc(clamp(22px, 5vh, 48px) + 54px); }
+  .slot { width: 100%; max-width: 560px; min-height: 210px; }
+  .say .h3 { font-size: clamp(28px, 7vw, 40px); }
+}
+@media (max-width: 600px) {
+  .steps { font-size: 12px; gap: 12px; }
+  .say p:not(.h3):not(.eyebrow) { font-size: 16px; }
+}
+
+/* ---------- Placeholders: designed frames that say what photo belongs there ---------- */
+.ph {
+  position: relative; aspect-ratio: 4 / 5; border-radius: 20px; overflow: hidden;
+  display: grid; place-items: center; align-content: center; gap: 18px;
+  background: linear-gradient(160deg, #EFEAE1, #E4DDD0); color: rgba(29, 29, 31, .5);
+  box-shadow: inset 0 0 0 1px rgba(29, 29, 31, .06);
+}
+.ph svg { width: 34%; height: auto; }
+.ph small { font-size: 13px; letter-spacing: -.01em; color: var(--ink-2); }
+.ph.tall { aspect-ratio: 4 / 5; }
+
+/* ---------- 3 Work ---------- */
+.work { padding: clamp(100px, 14vw, 180px) 0 clamp(80px, 10vw, 140px); background: var(--ivory); }
+.work-head { display: grid; grid-template-columns: 1fr minmax(280px, 420px); gap: 24px 48px; align-items: end; }
+.filters { display: flex; flex-wrap: wrap; gap: 4px 22px; margin-top: 40px; margin-bottom: 28px; }
+.filters button { border: 0; background: none; padding: 10px 0; min-height: 44px; font-size: 17px; color: var(--ink-2); cursor: pointer; position: relative; }
+.filters button[aria-pressed="true"] { color: var(--ink); font-weight: 600; }
+.filters button[aria-pressed="true"]::after { content: ""; position: absolute; left: 0; right: 0; bottom: 6px; height: 1.5px; background: var(--ink); }
+.rail {
+  --inset: max(var(--gutter), (100vw - 1180px) / 2);
+  display: flex; gap: clamp(14px, 1.6vw, 22px); overflow-x: auto; overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory; scroll-padding-inline: var(--inset); padding: 0 var(--inset) 8px;
+  scrollbar-width: none;
+}
+.rail::-webkit-scrollbar { display: none; }
+.rail figure { flex: 0 0 clamp(250px, 29vw, 380px); margin: 0; scroll-snap-align: start; }
+.rail figure[hidden] { display: none; }
+.rail figcaption { margin-top: 14px; font-size: 14px; color: var(--ink-2); letter-spacing: -.016em; }
+.rail figcaption b { color: var(--ink); font-weight: 600; }
+.rail-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 28px; }
+.rail-nav { display: flex; gap: 12px; }
+.rail-nav button { width: 44px; height: 44px; border: 0; border-radius: 50%; cursor: pointer; color: var(--ink); display: grid; place-items: center; }
+.rail-nav button:disabled { opacity: .35; cursor: default; }
+.rail-nav svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 760px) { .work-head { grid-template-columns: 1fr; } .rail figure { flex-basis: 76vw; } }
+
+/* ---------- 4 Lab-grown ---------- */
+.lab { height: 260vh; position: relative; background: var(--night); color: var(--moon); }
+.lab .stick { background: var(--night); }
+.lab-facet { position: absolute; left: 50%; top: 50%; width: min(118vh, 130vw); height: auto; color: var(--moon); opacity: .14; transform: translate(-62%, -50%) rotate(var(--rot, 0deg)); will-change: transform; }
+.lab-grid { position: relative; z-index: 1; height: 100%; display: grid; grid-template-columns: 1fr minmax(280px, 400px); gap: 48px; align-items: center; }
+.lab .h2 { font-size: clamp(44px, 6.6vw, 96px); }
+.facts { list-style: none; margin: 0; padding: 0; display: grid; gap: 34px; }
+.facts li { opacity: calc(.18 + var(--f, 0) * .82); transform: translateY(calc((1 - var(--f, 0)) * 18px)); }
+.facts .h3 { font-size: clamp(22px, 2vw, 28px); margin-bottom: 6px; }
+.facts p { margin: 0; }
+.facts p:not(.h3) { color: var(--moon-2); }
+@media (max-width: 860px) {
+  .lab-facet { transform: translate(-50%, -62%) rotate(var(--rot, 0deg)); opacity: .1; }
+  .lab-grid { grid-template-columns: 1fr; align-content: center; gap: 36px; }
+  .facts { gap: 22px; }
+}
+
+/* ---------- 5 Visit ---------- */
+.visit { padding: clamp(100px, 13vw, 170px) 0; background: var(--paper); }
+.visit-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: clamp(32px, 6vw, 88px); align-items: center; }
+.visit-photo { margin: 0; }
+.visit-photo .ph { border-radius: 22px; }
+.visit-copy .h2 { font-size: clamp(40px, 5vw, 68px); margin-bottom: 22px; }
+.where { display: grid; grid-template-columns: repeat(3, auto); gap: 18px 28px; margin: 34px 0 0; padding-top: 22px; border-top: 1px solid var(--line); font-size: 14px; }
+.where dt { font-weight: 600; margin-bottom: 4px; }
+.where dd { margin: 0; color: var(--ink-2); }
+.where a { color: var(--ink-2); text-decoration: none; }
+.where a:hover { color: var(--gold); }
+.visit .cta { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; margin-top: 34px; }
+@media (max-width: 860px) {
+  .visit-grid { grid-template-columns: 1fr; }
+  .visit-photo .ph { aspect-ratio: 4 / 3; }
+  .where { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- Reduced motion: every pinned scene becomes a still composition ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .story { display: flex; flex-direction: column; }
+  .canvas-stick { position: relative; height: 100svh; min-height: 560px; }
+  .hero { height: auto; margin-top: -100svh; }
+  .hero .stick { position: relative; height: 100svh; min-height: 560px; }
+  .lab { height: auto; }
+  .process { height: auto; margin-top: 0; padding: 120px 0 100px; background: var(--night); }
+  .process > .stick { display: none; }
+  .process-still { display: block; }
+  .process-still .eyebrow { color: var(--gold-light); }
+  .process-still ol { list-style: none; padding: 0; margin: 48px 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+  .process-still figure { margin: 0 0 22px; aspect-ratio: 1; display: grid; place-items: center; border-radius: 22px; background: var(--night-2); color: var(--moon); overflow: hidden; }
+  .process-still figure svg { width: 60%; height: auto; }
+  .process-still figure canvas { width: 100% !important; height: 100% !important; }
+  .process-still .h3 { margin-bottom: 8px; }
+  .process-still p:not(.h3):not(.eyebrow) { color: var(--moon-2); margin: 0; }
+  .facts li { opacity: 1; transform: none; }
+  .lab .stick { position: relative; height: auto; padding: 120px 0; }
+  .lab-facet { transform: translate(-62%, -50%); }
+  @media (max-width: 860px) { .process-still ol { grid-template-columns: 1fr; } }
+}
+
+/* Short, wide screens: keep the headline from crowding the ring */
+@media (max-width: 1099px) and (min-aspect-ratio: 5/4) { .hero-title { font-size: min(10.5vw, 15vh); } }
