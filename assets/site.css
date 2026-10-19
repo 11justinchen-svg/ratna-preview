@@ -3,9 +3,9 @@
    element: it is the logomark, it becomes the CAD drawing, and it closes the page. */
 
 :root {
-  --ivory: #F4F0E8;
-  --paper: #FBF9F5;
-  --sand: #E9E2D5;
+  --ivory: #F8ECDE; /* the logo's cream, so the logo sits on the page with no box */
+  --paper: #FCF6EE;
+  --sand: #EEDFCB;
   --ink: #1D1D1F;
   --ink-2: #6B665E;
   --night: #0E0D0C;
@@ -13,12 +13,16 @@
   --moon: #F5F2EC;
   --moon-2: #A8A298;
   --gold: #7A5A2E;
-  --gold-light: #D2B07A;
+  --gold-light: #CFA25A; /* the logo's gold, for accents on dark */
   --line: rgba(29, 29, 31, .12);
   --sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
   --serif: "Instrument Serif", "Iowan Old Style", "Times New Roman", serif;
   --ease: cubic-bezier(.16, 1, .3, 1);
   --gutter: clamp(20px, 4vw, 56px);
+  /* Cut, not molded: controls get a bevelled corner like a step-cut stone; content blocks are
+     plain rectangles, as on apple.com. Browsers without corner-shape get square corners. */
+  --cut-s: 7px;
+  --cut-m: 11px;
   color-scheme: light;
 }
 
@@ -39,11 +43,11 @@ body {
 img, svg { display: block; max-width: 100%; }
 a { color: inherit; }
 button, input, select, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 6px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 .dark :focus-visible, [data-theme="dark"] :focus-visible { outline-color: var(--gold-light); }
 .wrap { width: min(1180px, 100% - 2 * var(--gutter)); margin-inline: auto; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.skip { position: absolute; left: 12px; top: -60px; z-index: 100; padding: 10px 16px; background: var(--ink); color: var(--moon); border-radius: 10px; text-decoration: none; }
+.skip { position: absolute; left: 12px; top: -60px; z-index: 100; padding: 10px 16px; background: var(--ink); color: var(--moon); text-decoration: none; }
 .skip:focus { top: 12px; }
 
 /* Type: one superfamily, Apple scale, sentence case, semibold headlines ending in a period.
@@ -58,13 +62,13 @@ button, input, select, textarea { font: inherit; color: inherit; letter-spacing:
 .wordmark { font-family: var(--serif); font-weight: 400; letter-spacing: 0; }
 .wordmark i { font-style: italic; }
 
-/* Links and buttons: Apple style. One filled capsule, everything else is a text link with › */
+/* Links and buttons: one filled, cut-corner button; everything else is a text link with › */
 .link { color: var(--gold); text-decoration: none; font-weight: 400; white-space: nowrap; }
 .link:hover { text-decoration: underline; text-underline-offset: 3px; }
 [data-theme="dark"] .link, .dark .link { color: var(--gold-light); }
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-  min-height: 44px; padding: 0 22px; border: 0; border-radius: 980px;
+  min-height: 44px; padding: 0 22px; border: 0; border-radius: 0;
   background: var(--ink); color: var(--moon); font-size: 17px; font-weight: 500; text-decoration: none;
   cursor: pointer; transition: transform .5s var(--ease), background-color .3s;
 }
@@ -72,6 +76,12 @@ button, input, select, textarea { font: inherit; color: inherit; letter-spacing:
 .btn:active { transform: scale(.97); }
 [data-theme="dark"] .btn, .dark .btn { background: var(--moon); color: var(--ink); }
 [data-theme="dark"] .btn:hover, .dark .btn:hover { background: #fff; }
+.btn, .cut-s { border-radius: 0; }
+.cut-m { border-radius: 0; }
+@supports (corner-shape: bevel) {
+  .btn, .cut-s { border-radius: var(--cut-s); corner-shape: bevel; }
+  .cut-m { border-radius: var(--cut-m); corner-shape: bevel; }
+}
 
 /* Masked line reveal for headlines: each line rises out of its own clip */
 .ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
@@ -113,60 +123,61 @@ button, input, select, textarea { font: inherit; color: inherit; letter-spacing:
   .glass.on-dark { background: rgba(26, 24, 22, .96); }
 }
 
-/* ---------- Nav: a floating glass capsule (iOS 26 style) ---------- */
+/* ---------- Nav: a full-width glass bar, as on apple.com, aligned to the content grid ---------- */
 .nav {
-  position: fixed; z-index: 50; top: 12px; left: 50%; transform: translateX(-50%);
-  width: min(980px, calc(100% - 24px)); height: 52px; border-radius: 26px;
-  display: flex; align-items: center; gap: 8px; padding: 0 8px 0 18px;
+  position: fixed; z-index: 50; top: 0; left: 0; right: 0; height: 52px; border-radius: 0;
+  display: flex; align-items: center; gap: 8px; padding: 0 max(var(--gutter), (100vw - 1180px) / 2);
   color: var(--ink); transition: color .4s, transform .6s var(--ease), opacity .4s;
+  box-shadow: inset 0 -1px 0 rgba(29, 29, 31, .08);
 }
-.nav.on-dark { color: var(--moon); }
-.nav.hide { transform: translate(-50%, -84px); }
+.nav::after { display: none; }
+.nav.on-dark { color: var(--moon); box-shadow: inset 0 -1px 0 rgba(245, 242, 236, .1); }
+.nav.hide { transform: translateY(-100%); }
 .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; margin-right: auto; min-height: 44px; }
-.brand svg { width: 22px; height: 22px; }
-.brand .wordmark { font-size: 22px; line-height: 1; }
+.brand img { height: 34px; width: auto; display: block; }
 .nav-links { display: flex; gap: 2px; list-style: none; margin: 0; padding: 0; }
 .nav-links a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; font-size: 14px; text-decoration: none; opacity: .82; transition: opacity .2s; }
 .nav-links a:hover, .nav-links a[aria-current="page"] { opacity: 1; }
 .nav .btn { min-height: 36px; padding: 0 16px; font-size: 14px; }
 .nav.on-dark .btn { background: var(--moon); color: var(--ink); }
-.menu-btn { display: none; width: 44px; height: 44px; border: 0; background: none; cursor: pointer; border-radius: 50%; }
+.menu-btn { display: none; width: 44px; height: 44px; border: 0; background: none; cursor: pointer; margin-right: -10px; }
 .menu-btn span { display: block; width: 18px; height: 1.5px; margin: 5px auto; background: currentColor; transition: transform .4s var(--ease); }
 .menu-open .menu-btn span:first-child { transform: translateY(3.25px) rotate(45deg); }
 .menu-open .menu-btn span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
 .sheet {
-  position: fixed; z-index: 49; top: 72px; left: 12px; right: 12px; border-radius: 26px; padding: 10px;
-  opacity: 0; transform: translateY(-8px) scale(.98); pointer-events: none; transition: opacity .35s, transform .5s var(--ease);
+  position: fixed; z-index: 49; top: 52px; left: 0; right: 0; border-radius: 0; padding: 8px var(--gutter) 22px;
+  opacity: 0; transform: translateY(-8px); pointer-events: none; transition: opacity .35s, transform .5s var(--ease);
 }
 .menu-open .sheet { opacity: 1; transform: none; pointer-events: auto; }
-.sheet a { display: block; padding: 14px 14px; font-size: 24px; font-weight: 600; letter-spacing: -.02em; text-decoration: none; border-radius: 16px; }
-.sheet a:hover { background: rgba(255,255,255,.3); }
+.sheet a { display: block; padding: 14px 0; font-size: 24px; font-weight: 600; letter-spacing: -.02em; text-decoration: none; border-bottom: 1px solid var(--line); }
+.sheet.on-dark a { border-color: rgba(245, 242, 236, .12); }
+/* A menu has to be read, so its glass is heavily frosted, as Apple's are */
+.sheet.glass { background: rgba(248, 236, 222, .9); }
+.sheet.glass.on-dark { background: rgba(20, 18, 16, .9); }
+.sheet::after { display: none; }
 @media (max-width: 760px) {
   .nav-links { display: none; }
   .menu-btn { display: block; }
-  .nav { padding-left: 14px; }
 }
 @media (min-width: 761px) { .sheet { display: none; } }
 
 /* ---------- Finale footer ---------- */
-.finale { background: var(--night); color: var(--moon); padding: clamp(80px, 12vw, 160px) 0 28px; overflow: hidden; }
+.finale { background: var(--ivory); color: var(--ink); padding: clamp(80px, 12vw, 160px) 0 28px; overflow: hidden; border-top: 1px solid var(--line); }
 .finale .ask { display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: end; }
 .finale .ask p { margin: 0; }
-.finale .ask .lede { color: var(--moon-2); }
+.finale .ask .lede { color: var(--ink-2); }
 .finale .ask .cta { display: flex; flex-wrap: wrap; gap: 14px 22px; align-items: center; margin-top: 28px; }
-.finale .big { position: relative; margin: clamp(64px, 10vw, 140px) 0 0; display: flex; align-items: flex-end; justify-content: space-between; gap: 2vw; }
-.finale .big .wordmark { font-size: clamp(120px, 31vw, 520px); line-height: .78; letter-spacing: -.02em; margin-left: -.04em; }
-.finale .big .by { font-family: var(--serif); font-style: italic; font-size: clamp(28px, 4.6vw, 72px); line-height: 1; color: var(--moon-2); padding-bottom: 1.2vw; white-space: nowrap; }
-.finale .big svg { position: absolute; right: 7%; top: -8%; width: clamp(80px, 13vw, 210px); height: auto; opacity: .9; }
-.finale .meaning { margin: 22px 0 0; color: var(--moon-2); font-size: 14px; }
-.finale .meaning span { font-family: var(--serif); font-size: 18px; color: var(--moon); }
-.finale .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; margin-top: 56px; padding-top: 18px; border-top: 1px solid rgba(245, 242, 236, .14); font-size: 12px; color: var(--moon-2); }
-.finale .foot a { color: var(--moon-2); text-decoration: none; }
-.finale .foot a:hover { color: var(--moon); }
+.finale .logo { display: block; width: min(440px, 72vw); height: auto; margin: clamp(72px, 10vw, 140px) auto 0; }
+/* The logo file has its own cream background, never darker than the page: darken lets the page
+   show through it, so there's no box */
+.finale .logo, .pv-logo { mix-blend-mode: darken; }
+.finale .meaning { margin: 26px 0 0; text-align: center; color: var(--ink-2); font-size: 14px; }
+.finale .meaning span { font-family: var(--serif); font-size: 18px; color: var(--ink); }
+.finale .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 24px; margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 12px; color: var(--ink-2); }
+.finale .foot a { color: var(--ink-2); text-decoration: none; }
+.finale .foot a:hover { color: var(--gold); }
 @media (max-width: 760px) {
   .finale .ask { grid-template-columns: 1fr; }
-  .finale .big { flex-direction: column; align-items: flex-start; }
-  .finale .big svg { right: 0; top: -40%; }
 }
 
 /* The facet drawing (signature element) */

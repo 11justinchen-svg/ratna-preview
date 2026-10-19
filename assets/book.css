@@ -10,11 +10,11 @@
 .book-head .seg { grid-column: 2; grid-row: 1 / span 2; align-self: end; }
 
 /* Segmented control: a glass capsule with a brighter glass thumb that slides */
-.seg { display: inline-grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 999px; }
-.seg button { position: relative; z-index: 1; border: 0; background: none; min-height: 40px; padding: 0 20px; border-radius: 999px; font-size: 15px; font-weight: 500; color: var(--ink-2); cursor: pointer; white-space: nowrap; transition: color .3s; }
+.seg { display: inline-grid; grid-template-columns: 1fr 1fr; padding: 4px; }
+.seg button { position: relative; z-index: 1; border: 0; background: none; min-height: 40px; padding: 0 20px; font-size: 15px; font-weight: 500; color: var(--ink-2); cursor: pointer; white-space: nowrap; transition: color .3s; }
 .seg button[aria-selected="true"] { color: var(--ink); }
 .seg-thumb {
-  position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px); border-radius: 999px;
+  position: absolute; z-index: 0; top: 4px; bottom: 4px; left: 4px; width: calc(50% - 4px);
   background: rgba(255, 255, 255, .78);
   box-shadow: inset 0 1px 1px #fff, 0 3px 10px -2px rgba(20, 16, 10, .18), 0 0 0 .5px rgba(20, 16, 10, .06);
   transition: transform .55s var(--ease);
@@ -25,14 +25,11 @@
 
 /* Preview */
 .preview { position: sticky; top: 84px; }
-.card { aspect-ratio: 1; border-radius: 28px; overflow: hidden; background: var(--paper); display: grid; place-items: center; position: relative; }
+.card { aspect-ratio: 1; overflow: hidden; background: var(--paper); display: grid; place-items: center; position: relative; }
 .card > div { position: absolute; inset: 0; display: grid; place-items: center; transition: opacity .6s var(--ease); }
 .book[data-mode="consult"] .pv-quote, .book[data-mode="quote"] .pv-consult { opacity: 0; pointer-events: none; }
-.pv-consult { align-content: center; gap: 26px; background: var(--night); color: var(--moon); }
-.pv-mark { width: 46%; height: auto; }
-.pv-caption { margin: 0; text-align: center; font-size: 19px; font-weight: 600; letter-spacing: -.02em; line-height: 1.3; }
-.pv-caption span { font-size: 14px; font-weight: 400; color: var(--moon-2); }
-@media (max-width: 960px) { .pv-caption { display: none; } .pv-mark { width: 60%; } }
+.pv-consult { background: var(--ivory); }
+.pv-logo { width: 68%; height: auto; }
 .pv-ring { width: 82%; height: auto; overflow: visible; color: var(--ink); }
 .pv-ring .band { fill: var(--metal, #E3E1DC); stroke: rgba(29, 29, 31, .55); stroke-width: 1.2; vector-effect: non-scaling-stroke; transition: fill .5s, opacity .5s; }
 .pv-ring .band.sheen { fill: url(#sheen); stroke: none; }
@@ -58,7 +55,7 @@
 .tiles.cols-4 { grid-template-columns: repeat(4, 1fr); }
 .tile {
   position: relative; display: grid; align-content: center; gap: 4px; min-height: 64px; padding: 16px 18px;
-  border: 1px solid #CFC9BF; border-radius: 18px; background: rgba(255, 255, 255, .45); cursor: pointer;
+  border: 1px solid #CFC9BF; background: rgba(255, 255, 255, .45); cursor: pointer;
   transition: border-color .2s, box-shadow .2s, background-color .2s;
 }
 .tile:hover { border-color: #8D877D; }
@@ -73,7 +70,7 @@
 .shapes .tile svg { width: 56px; height: 56px; color: var(--ink); }
 .shapes .tile b { font-size: 15px; font-weight: 500; }
 .metals .tile { justify-items: center; text-align: center; padding: 18px 8px; }
-.metals .tile i { width: 34px; height: 34px; border-radius: 50%; background: radial-gradient(circle at 32% 30%, #fff 0, var(--m) 45%, color-mix(in srgb, var(--m) 70%, #000) 100%); box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+.metals .tile i { width: 34px; height: 34px; background: linear-gradient(135deg, #fff 0, var(--m) 40%, color-mix(in srgb, var(--m) 72%, #000) 100%); clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%); box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
 .metals .tile b { font-size: 14px; font-weight: 500; }
 
 .days { display: flex; gap: 10px; overflow-x: auto; padding: 2px 2px 8px; margin: 0 -2px 14px; scrollbar-width: none; scroll-snap-type: x proximity; }
@@ -90,7 +87,7 @@
 .field { position: relative; display: block; }
 .field.wide { grid-column: 1 / -1; }
 .field input, .field select, .field textarea {
-  width: 100%; min-height: 58px; padding: 24px 16px 8px; border: 1px solid #CFC9BF; border-radius: 14px;
+  width: 100%; min-height: 58px; padding: 24px 16px 8px; border: 1px solid #CFC9BF;
   background: rgba(255, 255, 255, .6); font-size: 17px; outline: none; appearance: none; transition: border-color .2s, box-shadow .2s;
 }
 .field textarea { resize: vertical; min-height: 110px; padding-top: 28px; }
@@ -110,7 +107,7 @@
 .check { display: inline-flex; gap: 10px; align-items: center; min-height: 44px; font-size: 15px; cursor: pointer; }
 .check input { width: 20px; height: 20px; accent-color: var(--ink); }
 
-.drop { display: grid; gap: 4px; justify-items: center; text-align: center; padding: 30px 20px; border: 1.5px dashed #BDB6AA; border-radius: 18px; cursor: pointer; margin-bottom: 12px; transition: border-color .2s, background-color .2s; }
+.drop { display: grid; gap: 4px; justify-items: center; text-align: center; padding: 30px 20px; border: 1.5px dashed #BDB6AA; cursor: pointer; margin-bottom: 12px; transition: border-color .2s, background-color .2s; }
 .drop:hover, .drop.over { border-color: var(--ink); background: rgba(255, 255, 255, .5); }
 .drop input { position: absolute; opacity: 0; width: 1px; height: 1px; }
 .drop:has(input:focus-visible) { outline: 2px solid var(--gold); outline-offset: 3px; }
@@ -118,8 +115,8 @@
 .thumbs { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 12px; }
 .thumbs:empty { display: none; }
 .thumbs figure { margin: 0; position: relative; width: 84px; height: 84px; }
-.thumbs img { width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
-.thumbs button { position: absolute; top: -8px; right: -8px; width: 26px; height: 26px; border-radius: 50%; border: 0; background: var(--ink); color: var(--moon); font-size: 14px; line-height: 1; cursor: pointer; }
+.thumbs img { width: 100%; height: 100%; object-fit: cover; }
+.thumbs button { position: absolute; top: -8px; right: -8px; width: 26px; height: 26px; border: 0; background: var(--ink); color: var(--moon); font-size: 14px; line-height: 1; cursor: pointer; }
 
 .err { margin: 10px 0 0; color: #B3261E; font-size: 14px; min-height: 0; }
 .err:empty { display: none; }
@@ -135,13 +132,13 @@
 @keyframes draw-in { to { stroke-dashoffset: 0; } }
 .done-title { font-size: clamp(40px, 5vw, 64px); margin-bottom: 16px; }
 .done .summary { max-width: 520px; margin-bottom: 26px; }
-.preview-note { max-width: 520px; padding: 14px 16px; border-radius: 14px; background: var(--sand); }
+.preview-note { max-width: 520px; padding: 14px 16px; background: var(--sand); border-left: 2px solid var(--gold); }
 
 /* Mobile bar */
 .mbar { display: none; }
 
 .mini { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 10px 24px; padding: 28px 0 40px; border-top: 1px solid var(--line); }
-.mini .wordmark { font-size: 24px; }
+.mini-mark { height: 36px; width: auto; }
 .mini a { color: inherit; text-decoration: none; }
 .mini a:hover { color: var(--gold); }
 
@@ -150,13 +147,13 @@
   .book-head .seg { grid-column: 1; grid-row: auto; justify-self: start; }
   .book-grid { grid-template-columns: 1fr; }
   .preview { position: relative; top: 0; display: grid; grid-template-columns: 140px 1fr; gap: 18px; align-items: center; }
-  .card { border-radius: 20px; }
   .summary { margin: 0; }
   .summary div { padding: 8px 0; font-size: 14px; }
   .tiles.cols-4 { grid-template-columns: repeat(2, 1fr); }
   .mbar {
-    display: flex; position: fixed; z-index: 40; left: 12px; right: 12px; bottom: max(12px, env(safe-area-inset-bottom));
-    align-items: center; gap: 12px; padding: 8px 8px 8px 18px; border-radius: 30px;
+    display: flex; position: fixed; z-index: 40; left: 0; right: 0; bottom: 0;
+    align-items: center; gap: 12px; padding: 10px var(--gutter) max(10px, env(safe-area-inset-bottom)); border-radius: 0;
+    box-shadow: inset 0 1px 0 rgba(29, 29, 31, .1);
     transform: translateY(140%); transition: transform .6s var(--ease);
   }
   .mbar.show { transform: none; }
@@ -173,3 +170,9 @@
 }
 
 .is-done .preview .summary { display: none; }
+
+/* Cut corners on the controls (squared where corner-shape isn't supported) */
+@supports (corner-shape: bevel) {
+  .tile, .field input, .field select, .field textarea, .drop, .seg { border-radius: var(--cut-m); corner-shape: bevel; }
+  .seg-thumb, .thumbs button { border-radius: var(--cut-s); corner-shape: bevel; }
+}

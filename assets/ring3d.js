@@ -18,7 +18,7 @@ const html = htm.bind(React.createElement);
 const R = window.Ratna;
 const { clamp, range, ease, reduced } = R;
 const lerp = (a, b, t) => a + (b - a) * t;
-const IVORY = new THREE.Color("#F4F0E8");
+const IVORY = new THREE.Color("#F8ECDE"); // matches --ivory, the logo's cream
 const NIGHT = new THREE.Color("#0E0D0C");
 const STONE_Y = 3.5; // girdle height above the ring's centre; the band's outer radius is 2.45
 
